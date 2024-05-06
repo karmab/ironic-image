@@ -2,7 +2,6 @@
 
 set -euxo pipefail
 
-OS=${1:-centos}
 DEST=${2:-/tmp/esp.img}
 ARCH=$(uname -m)
 
@@ -37,6 +36,10 @@ dnf install -y grub2 shim dosfstools mtools glibc-gconv-extra $PACKAGES
 ## an MVP.
 dd bs=1024 count=6400 if=/dev/zero of="$DEST"
 mkfs.msdos -F 12 -n 'ESP_IMAGE' "$DEST"
+
+OS=centos
+[ -d /boot/efi/EFI/redhat ] && OS=redhat
+[ -d /boot/efi/EFI/fedora ] && OS=fedora
 
 mmd -i "$DEST" EFI
 mmd -i "$DEST" EFI/BOOT
